@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Statera Regulatory Consulting — FDA strategy from an agency insider</title>
+<meta name="description" content="Bring your medical device to market with confidence. Melissa Hall, former FDA official with 10 years inside the agency, guides small medical device companies through 510(k), De Novo, and PMA — without the costly delays." />
+
+<!-- Fonts: serif display (authority) + clean sans (readability) per reference.md -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   STATERA REGULATORY CONSULTING — REDESIGN
+   Tokens, base, components, sections. All values are tokens.
+   ============================================================ */
+
+/* ---- TOKENS (reference.md) ---- */
+:root {
+  /* Color */
+  --color-bg: #FDFAF9;
+  --color-surface: #F2E0DA;
+  --color-primary: #0E2841;
+  --color-accent: #E97132;   /* DECORATIVE ONLY — never body text / never white-on-accent */
+  --color-teal: #156082;
+  --color-text-primary: #2C2C2C;
+  --color-text-secondary: #6B6B6B;
+  --color-white: #FFFFFF;
+
+  /* Derived (still within palette family) */
+  --color-primary-hover: #163A5A;
+  --color-teal-hover: #0F4A66;
+  --color-border: #E7D8D2;
+
+  /* Type families */
+  --font-display: 'Lora', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Type scale: 12/14/16/20/24/32/48 (reference.md — nothing outside) */
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-32: 2rem;
+  --fs-48: 3rem;
+
+  /* Spacing scale: 8/16/24/40/64/96 (SKILL.md) */
+  --sp-8: 8px;
+  --sp-16: 16px;
+  --sp-24: 24px;
+  --sp-40: 40px;
+  --sp-64: 64px;
+  --sp-96: 96px;
+
+  /* Layout */
+  --max-width: 1200px;
+  --gutter: 24px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(14,40,65,0.08), 0 1px 2px rgba(14,40,65,0.04);
+  --shadow-md: 0 8px 24px rgba(14,40,65,0.10);
+  --transition: 160ms ease;
+}
+
+/* ---- RESET / BASE ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-16);
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-display); color: var(--color-primary); margin: 0; line-height: 1.15; font-weight: 600; }
+p { margin: 0; }
+a { color: var(--color-teal); text-decoration: none; }
+a:hover { color: var(--color-teal-hover); }
+img { max-width: 100%; display: block; }
+
+/* skip link for a11y */
+.skip-link {
+  position: absolute; left: -999px; top: 0; z-index: 200;
+  background: var(--color-primary); color: var(--color-white);
+  padding: var(--sp-8) var(--sp-16); border-radius: 0 0 var(--radius-sm) 0;
+}
+.skip-link:focus { left: 0; color: var(--color-white); }
+
+/* visible focus everywhere */
+a:focus-visible, button:focus-visible, input:focus-visible,
+textarea:focus-visible, select:focus-visible {
+  outline: 3px solid var(--color-teal);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- LAYOUT ---- */
+.container { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 0 var(--gutter); }
+.section { padding: var(--sp-96) 0; position: relative; }
+.section--tight { padding: var(--sp-64) 0; }
+.section--surface { background: var(--color-surface); }
+.section--primary { background: var(--color-primary); }
+.section--primary h2, .section--primary h3 { color: var(--color-white); }
+
+.eyebrow {
+  font-size: var(--fs-14); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-teal); margin-bottom: var(--sp-16);
+}
+.section-head { max-width: 640px; margin-bottom: var(--sp-64); }
+.section-head h2 { font-size: var(--fs-32); margin-bottom: var(--sp-16); }
+.section-head p { color: var(--color-text-secondary); font-size: var(--fs-20); }
+
+/* ============================================================
+   FLOATING GRADIENT BACKGROUND
+   navy -> teal -> sage bokeh, low opacity (<=20%) — reference.md
+   Built in CSS (no image) for performance / LCP.
+   ============================================================ */
+.bokeh {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+  background: var(--color-bg);
+}
+.bokeh::before {
+  content: ""; position: absolute; inset: -10%;
+  background:
+    radial-gradient(280px 280px at 12% 18%, rgba(14,40,65,0.18), transparent 70%),
+    radial-gradient(340px 340px at 82% 12%, rgba(21,96,130,0.16), transparent 70%),
+    radial-gradient(420px 420px at 70% 78%, rgba(122,150,120,0.16), transparent 70%),
+    radial-gradient(220px 220px at 28% 82%, rgba(21,96,130,0.12), transparent 70%),
+    radial-gradient(180px 180px at 50% 45%, rgba(233,113,50,0.10), transparent 70%);
+  filter: blur(12px);
+  opacity: 0.9; /* the rgba caps each blob; whole layer reads <=20% over light */
+}
+
+/* ============================================================
+   COMPONENT: NAV
+   ============================================================ */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(253,250,249,0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+.nav__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-24); height: 72px; }
+.nav__links { display: flex; align-items: center; gap: var(--sp-24); list-style: none; margin: 0; padding: 0; }
+.nav__links a { color: var(--color-primary); font-size: var(--fs-14); font-weight: 500; }
+.nav__links a:hover { color: var(--color-teal); }
+.nav__cta { display: inline-flex; }
+.nav__toggle {
+  display: none; background: none; border: 0; cursor: pointer;
+  color: var(--color-primary); font-size: var(--fs-24); padding: var(--sp-8);
+}
+
+/* LOGO — faithful CSS recreation of the original mark.
+   REPLACE with the original logo asset: <img src="statera-logo.svg" .../>
+   Original = blush background, coral S-mark, charcoal wordmark. Do not recolor. */
+.logo { display: inline-flex; align-items: center; gap: var(--sp-16); }
+.logo__mark {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--color-surface);
+  display: grid; place-items: center; flex: none;
+}
+.logo__mark span {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--fs-24);
+  color: var(--color-accent); /* coral S — decorative glyph, not body text */
+  line-height: 1;
+}
+.logo__word { display: flex; flex-direction: column; line-height: 1.05; }
+.logo__word strong { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-20); color: #2C2C2C; }
+.logo__word small { font-size: var(--fs-12); color: var(--color-text-secondary); letter-spacing: 0.04em; }
+
+/* ============================================================
+   COMPONENT: BUTTON (states: default/hover/focus/active/disabled)
+   Primary uses navy (white text passes AA). Coral NEVER as button bg.
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--sp-8);
+  font-family: var(--font-body); font-size: var(--fs-16); font-weight: 600;
+  padding: 14px var(--sp-24); border-radius: var(--radius-sm);
+  border: 2px solid transparent; cursor: pointer; transition: var(--transition);
+  text-align: center;
+}
+.btn--primary { background: var(--color-primary); color: var(--color-white); }
+.btn--primary:hover { background: var(--color-primary-hover); color: var(--color-white); transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(0); }
+.btn--secondary { background: transparent; color: var(--color-primary); border-color: var(--color-primary); }
+.btn--secondary:hover { background: var(--color-primary); color: var(--color-white); }
+.btn--on-dark { background: var(--color-white); color: var(--color-primary); }
+.btn--on-dark:hover { background: var(--color-surface); color: var(--color-primary); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* ============================================================
+   SECTION: HERO
+   ============================================================ */
+.hero { padding: var(--sp-96) 0; }
+.hero__grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--sp-64); align-items: center; }
+.hero h1 { font-size: var(--fs-48); margin-bottom: var(--sp-24); }
+.hero__sub { font-size: var(--fs-20); color: var(--color-text-primary); margin-bottom: var(--sp-40); max-width: 34ch; }
+.hero__sub strong { color: var(--color-primary); }
+.hero__actions { display: flex; gap: var(--sp-16); flex-wrap: wrap; }
+.hero__note { margin-top: var(--sp-24); font-size: var(--fs-14); color: var(--color-text-secondary); }
+
+/* Hero portrait card */
+.hero__card {
+  background: var(--color-white); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: var(--sp-40); border: 1px solid var(--color-border);
+}
+.hero__card .quote { font-family: var(--font-display); font-style: italic; font-size: var(--fs-24); color: var(--color-primary); line-height: 1.3; }
+.hero__card .attr { margin-top: var(--sp-24); display: flex; align-items: center; gap: var(--sp-16); }
+.hero__avatar {
+  width: 56px; height: 56px; border-radius: 50%; flex: none;
+  background: var(--color-surface); display: grid; place-items: center;
+  font-family: var(--font-display); color: var(--color-primary); font-size: var(--fs-20); font-weight: 600;
+}
+.hero__avatar-name { font-weight: 600; color: var(--color-primary); }
+.hero__avatar-role { font-size: var(--fs-14); color: var(--color-text-secondary); }
+
+/* ============================================================
+   COMPONENT: CREDIBILITY BAR
+   ============================================================ */
+.cred { background: var(--color-primary); }
+.cred__inner { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-24); }
+.cred__item { color: var(--color-white); }
+.cred__num { font-family: var(--font-display); font-size: var(--fs-32); display: block; }
+.cred__label { font-size: var(--fs-14); color: #C9D4DE; }
+.cred__roles { grid-column: 1 / -1; margin-top: var(--sp-24); border-top: 1px solid rgba(255,255,255,0.15); padding-top: var(--sp-24);
+  display: flex; flex-wrap: wrap; gap: var(--sp-8) var(--sp-24); }
+.cred__role { font-size: var(--fs-14); color: #C9D4DE; display: inline-flex; align-items: center; gap: var(--sp-8); }
+.cred__role::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent); flex: none; }
+
+/* ============================================================
+   COMPONENT: SERVICE CARD + cluster
+   ============================================================ */
+.cluster { margin-bottom: var(--sp-64); }
+.cluster:last-child { margin-bottom: 0; }
+.cluster__head { display: flex; align-items: baseline; gap: var(--sp-16); margin-bottom: var(--sp-24); flex-wrap: wrap; }
+.cluster__head h3 { font-size: var(--fs-24); }
+.cluster__head p { color: var(--color-text-secondary); font-size: var(--fs-16); }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-24); }
+
+.card {
+  background: var(--color-white); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: var(--sp-24);
+  transition: var(--transition); height: 100%;
+}
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--color-surface); }
+.card__icon {
+  width: 40px; height: 40px; border-radius: var(--radius-sm); margin-bottom: var(--sp-16);
+  display: grid; place-items: center; background: var(--color-surface);
+  color: var(--color-accent); /* decorative icon glyph — accent OK */
+}
+.card__icon svg { width: 22px; height: 22px; }
+.card h4 { font-family: var(--font-display); font-size: var(--fs-20); color: var(--color-primary); margin: 0 0 var(--sp-8); font-weight: 600; }
+.card p { font-size: var(--fs-16); color: var(--color-text-secondary); }
+
+/* ============================================================
+   COMPONENT: PROCESS STEP (How it works)
+   ============================================================ */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-40); counter-reset: step; }
+.step { position: relative; }
+.step__num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--color-surface); color: var(--color-primary);
+  font-family: var(--font-display); font-size: var(--fs-24); font-weight: 600;
+  display: grid; place-items: center; margin-bottom: var(--sp-16);
+}
+.step h3 { font-size: var(--fs-20); margin-bottom: var(--sp-8); }
+.step p { color: var(--color-text-secondary); }
+
+/* ============================================================
+   SECTION: ABOUT
+   ============================================================ */
+.about__grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--sp-64); align-items: center; }
+.about__photo {
+  aspect-ratio: 4/5; border-radius: var(--radius); background: var(--color-surface);
+  display: grid; place-items: center; color: var(--color-text-secondary); font-size: var(--fs-14);
+  border: 1px solid var(--color-border); text-align: center; padding: var(--sp-24);
+}
+.about__body h2 { font-size: var(--fs-32); margin-bottom: var(--sp-24); }
+.about__body p { margin-bottom: var(--sp-16); color: var(--color-text-primary); }
+.about__body p:last-child { margin-bottom: 0; }
+
+/* ============================================================
+   SECTION: FOOTER CTA + form
+   ============================================================ */
+.cta__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-64); align-items: center; }
+.cta__copy h2 { color: var(--color-white); font-size: var(--fs-32); margin-bottom: var(--sp-16); }
+.cta__copy p { color: #C9D4DE; font-size: var(--fs-20); margin-bottom: var(--sp-24); }
+.cta__copy .alt { font-size: var(--fs-14); color: #9FB1BF; }
+.cta__copy .alt a { color: var(--color-white); text-decoration: underline; }
+
+/* FORM — replaces all mailto links (SKILL.md Phase 4.4).
+   In Squarespace: swap this <form> for a Form Block or Calendly embed. */
+.form { background: var(--color-white); border-radius: var(--radius); padding: var(--sp-40); box-shadow: var(--shadow-md); }
+.field { margin-bottom: var(--sp-16); }
+.field label { display: block; font-size: var(--fs-14); font-weight: 600; color: var(--color-primary); margin-bottom: var(--sp-8); }
+.field input, .field textarea, .field select {
+  width: 100%; font-family: var(--font-body); font-size: var(--fs-16);
+  padding: 12px var(--sp-16); border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm); color: var(--color-text-primary); background: var(--color-bg);
+}
+.field textarea { min-height: 96px; resize: vertical; }
+.form .btn { width: 100%; }
+.form__note { font-size: var(--fs-12); color: var(--color-text-secondary); margin-top: var(--sp-16); text-align: center; }
+
+/* ============================================================
+   SITE FOOTER
+   ============================================================ */
+.footer { background: var(--color-primary); color: #C9D4DE; padding: var(--sp-40) 0; border-top: 1px solid rgba(255,255,255,0.1); }
+.footer__inner { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-24); flex-wrap: wrap; font-size: var(--fs-14); }
+.footer a { color: var(--color-white); }
+
+/* ============================================================
+   RESPONSIVE — mobile-first checkpoints 375 / 768 / 1280
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero__grid, .about__grid, .cta__grid { grid-template-columns: 1fr; gap: var(--sp-40); }
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .cred__inner { grid-template-columns: repeat(2, 1fr); }
+  .steps { grid-template-columns: 1fr; gap: var(--sp-24); }
+}
+@media (max-width: 680px) {
+  .section { padding: var(--sp-64) 0; }
+  .hero h1 { font-size: var(--fs-32); }
+  .hero__sub { font-size: var(--fs-16); }
+  .cards { grid-template-columns: 1fr; }
+  .nav__links { display: none; }
+  .nav__links.is-open {
+    display: flex; flex-direction: column; align-items: flex-start;
+    position: absolute; top: 72px; left: 0; right: 0;
+    background: var(--color-bg); border-bottom: 1px solid var(--color-border);
+    padding: var(--sp-24); gap: var(--sp-16);
+  }
+  .nav__toggle { display: inline-flex; }
+  .nav__cta.nav__cta--desktop { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="bokeh" aria-hidden="true"></div>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="container nav__inner">
+    <!-- TODO: replace .logo block with original logo asset (do not recolor) -->
+    <a class="logo" href="#top" aria-label="Statera Regulatory Consulting — home">
+      <span class="logo__mark" aria-hidden="true"><span>S</span></span>
+      <span class="logo__word">
+        <strong>Statera</strong>
+        <small>Regulatory Consulting</small>
+      </span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="nav__links" id="navLinks">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#process">How it works</a></li>
+        <li><a href="#about">About Melissa</a></li>
+        <li><a class="nav__cta" href="#book"><span class="btn btn--primary" style="padding:8px 16px;font-size:var(--fs-14)">Book a free consultation</span></a></li>
+      </ul>
+    </nav>
+
+    <a class="nav__cta nav__cta--desktop btn btn--primary" href="#book" style="padding:10px 20px;font-size:var(--fs-14)">Book a free consultation</a>
+    <button class="nav__toggle" id="navToggle" aria-expanded="false" aria-controls="navLinks" aria-label="Toggle menu">☰</button>
+  </div>
+</header>
+
+<main id="main">
+<a id="top"></a>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="container hero__grid">
+    <div>
+      <p class="eyebrow">FDA strategy for medical device companies</p>
+      <h1>Bring your medical device to market with confidence.</h1>
+      <p class="hero__sub">Work directly with <strong>Melissa Hall</strong> — a former FDA official with 10 years inside the agency — to find the fastest, lowest-risk path to clearance.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#book">Book a free consultation</a>
+        <a class="btn btn--secondary" href="#services">See how I can help</a>
+      </div>
+      <p class="hero__note">No cost, no pressure — a 30-minute call to map your next step.</p>
+    </div>
+
+    <aside class="hero__card">
+      <p class="quote">“I know how the FDA thinks — because I spent a decade making those decisions from the inside.”</p>
+      <div class="attr">
+        <span class="hero__avatar" aria-hidden="true">MH</span>
+        <span>
+          <span class="hero__avatar-name">Melissa Hall</span><br />
+          <span class="hero__avatar-role">Founder · Former FDA Lead Reviewer</span>
+        </span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== CREDIBILITY BAR ===================== -->
+<section class="cred section--tight" aria-label="FDA credentials">
+  <div class="container cred__inner">
+    <div class="cred__item"><span class="cred__num">10 yrs</span><span class="cred__label">Inside the FDA</span></div>
+    <div class="cred__item"><span class="cred__num">510(k)</span><span class="cred__label">De Novo &amp; PMA pathways</span></div>
+    <div class="cred__item"><span class="cred__num">Orthopedic</span><span class="cred__label">&amp; spine device expertise</span></div>
+    <div class="cred__item"><span class="cred__num">1:1</span><span class="cred__label">You work directly with Melissa</span></div>
+
+    <div class="cred__roles">
+      <span class="cred__role">Lead Reviewer, Orthopedic Devices</span>
+      <span class="cred__role">Assistant Director, Spine Division — Office for Orthopedic Devices</span>
+      <span class="cred__role">Industry Education Lead</span>
+      <span class="cred__role">Premarket Policy Analyst</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SERVICES ===================== -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Services</p>
+      <h2>Support at every stage — in plain English</h2>
+      <p>Whether you're filing your first submission or keeping a cleared device compliant, here's where I can help.</p>
+    </div>
+
+    <!-- Getting to market -->
+    <div class="cluster">
+      <div class="cluster__head">
+        <h3>Getting to market</h3>
+        <p>Plan and file the right way, the first time.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18" stroke-linecap="round"/></svg>
+          </div>
+          <h4>Regulatory Strategy Development</h4>
+          <p>Map the fastest, lowest-risk path to FDA clearance for your device.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h10l4 4v12H5z" stroke-linejoin="round"/><path d="M14 4v4h4" stroke-linejoin="round"/></svg>
+          </div>
+          <h4>Submission Preparation &amp; Filing</h4>
+          <p>Prepare and submit your 510(k), De Novo, or PMA application correctly the first time.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4" stroke-linecap="round"/></svg>
+          </div>
+          <h4>Regulatory Gap Assessments</h4>
+          <p>Identify compliance gaps before the FDA does.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- Staying compliant -->
+    <div class="cluster">
+      <div class="cluster__head">
+        <h3>Staying compliant</h3>
+        <p>Protect your clearance once you're on the market.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z" stroke-linejoin="round"/></svg>
+          </div>
+          <h4>Post-Market Support</h4>
+          <p>Navigate post-approval requirements, MDRs, and field corrections.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h6" stroke-linecap="round"/></svg>
+          </div>
+          <h4>Labeling Development &amp; Review</h4>
+          <p>Ensure your labeling meets FDA requirements and doesn't create liability.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke-linecap="round"/></svg>
+          </div>
+          <h4>U.S. Agent for Foreign Establishments</h4>
+          <p>Required FDA representation for non-U.S. device manufacturers.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- Building capability -->
+    <div class="cluster">
+      <div class="cluster__head">
+        <h3>Building capability</h3>
+        <p>Strengthen your team so you rely on outside help less over time.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z" stroke-linejoin="round"/><path d="M9 11h6M9 15h6" stroke-linecap="round"/></svg>
+          </div>
+          <h4>Submission Documentation Support</h4>
+          <p>Strengthen your internal documentation for audits and submissions.</p>
+        </article>
+        <article class="card">
+          <div class="card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z" stroke-linejoin="round"/><path d="M7 10v5c0 1.5 5 3 5 3s5-1.5 5-3v-5" stroke-linejoin="round"/></svg>
+          </div>
+          <h4>Training &amp; Education</h4>
+          <p>Equip your team to understand and manage FDA requirements independently.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="section section--surface" id="process">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>Three simple steps to clarity</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step__num" aria-hidden="true">1</div>
+        <h3>Book a free call</h3>
+        <p>Tell me about your device and where you are. In 30 minutes you'll leave with a clear sense of your path and timeline.</p>
+      </div>
+      <div class="step">
+        <div class="step__num" aria-hidden="true">2</div>
+        <h3>Get a strategy</h3>
+        <p>I map the right FDA pathway — 510(k), De Novo, or PMA — and the work it takes to get there, with no surprises.</p>
+      </div>
+      <div class="step">
+        <div class="step__num" aria-hidden="true">3</div>
+        <h3>Move forward with confidence</h3>
+        <p>We prepare, file, and follow through together — so your submission lands right the first time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT MELISSA ===================== -->
+<section class="section" id="about">
+  <div class="container about__grid">
+    <div class="about__photo">[ Photo of Melissa Hall<br />— add headshot asset ]</div>
+    <div class="about__body">
+      <p class="eyebrow">About Melissa</p>
+      <h2>You're hiring a decade of FDA judgment — not a logo.</h2>
+      <p>For 10 years, I worked inside the FDA: as a lead reviewer for orthopedic devices, as assistant director in the Spine Division, leading industry education, and analyzing premarket policy. I sat on the other side of the table for the exact submissions you're preparing now.</p>
+      <p>I started Statera so small device companies could get that insider perspective directly — without navigating the agency alone or guessing what reviewers actually want to see.</p>
+      <p>When you work with Statera, you work with me. No account handoffs, no junior team learning on your timeline — just experienced judgment focused on getting your device to the people who need it.</p>
+      <div class="hero__actions" style="margin-top:var(--sp-24)">
+        <a class="btn btn--primary" href="#book">Talk to Melissa</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER CTA + FORM ===================== -->
+<section class="section section--primary" id="book">
+  <div class="container cta__grid">
+    <div class="cta__copy">
+      <p class="eyebrow" style="color:var(--color-accent)">Let's talk</p>
+      <h2>Book a free 30-minute consultation</h2>
+      <p>Bring your device and your questions. You'll leave with a clearer view of your path to market — at no cost.</p>
+      <p class="alt">Prefer to grab a time directly? <a href="#" data-calendly>Open the scheduler →</a></p>
+    </div>
+
+    <!-- Squarespace: replace with a Form Block or Calendly embed. -->
+    <form class="form" id="consultForm" novalidate>
+      <div class="field">
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required />
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="f-stage">Where are you in the process?</label>
+        <select id="f-stage" name="stage">
+          <option>Just exploring — not sure of the path yet</option>
+          <option>Preparing a submission (510(k) / De Novo / PMA)</option>
+          <option>Already on the market — staying compliant</option>
+          <option>Need a U.S. Agent</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-msg">Tell me about your device (optional)</label>
+        <textarea id="f-msg" name="message"></textarea>
+      </div>
+      <button class="btn btn--primary" type="submit">Request my free consultation</button>
+      <p class="form__note">I'll personally reply within one business day.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<!-- ===================== SITE FOOTER ===================== -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <span>© 2026 Statera Regulatory Consulting, LLC</span>
+    <span>FDA regulatory strategy for medical device companies</span>
+    <span><a href="#book">Book a consultation</a></span>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  var toggle = document.getElementById('navToggle');
+  var links = document.getElementById('navLinks');
+  toggle.addEventListener('click', function () {
+    var open = links.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  links.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      links.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Form: prototype-only handler (Squarespace handles real submission)
+  document.getElementById('consultForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!this.checkValidity()) { this.reportValidity(); return; }
+    var btn = this.querySelector('button[type="submit"]');
+    btn.textContent = 'Thank you — I\'ll be in touch shortly ✓';
+    btn.setAttribute('aria-disabled', 'true');
+    btn.disabled = true;
+  });
+</script>
+</body>
+</html>
