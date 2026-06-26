@@ -1,4 +1,4 @@
 {
-  "buildCommand": "cd statera-app && npm install && npm run build",
+  "buildCommand": null,
   "outputDirectory": "statera-app/dist"
 }
